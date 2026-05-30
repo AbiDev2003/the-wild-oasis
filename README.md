@@ -1,3 +1,3 @@
 # The-wild-oasis hotel management app
 
-A full stack hotel management app build on react.js, react queries, supabase.  
+A full stack hotel management app build on react.js, react queries, supabase.  Ongoing project...
