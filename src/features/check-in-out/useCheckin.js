@@ -12,6 +12,7 @@ export function useCheckin() {
       updateBooking(bookingId, {
         status: "checked-in",
         isPaid: true,
+        checkInAt: new Date().toISOString(),
         ...breakfast
       }),
     onSuccess: (data) => {

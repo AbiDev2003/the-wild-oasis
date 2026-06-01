@@ -20,13 +20,22 @@ function CreateBookingForm({ bookingToEdit = {}, onCloseModal }) {
 
   const { register, handleSubmit, reset, formState, watch, setValue } = useForm({
     defaultValues: isEditSession
-      ? { ...editValues, guestName: editGuests?.fullName || "", guestEmail: editGuests?.email || "" }
+      ? {
+          ...editValues,
+          startDate: editValues.startDate?.split("T")[0] || "",
+          endDate: editValues.endDate?.split("T")[0] || "",
+          guestName: editGuests?.fullName || "",
+          guestEmail: editGuests?.email || "",
+        }
       : { status: "unconfirmed", hasBreakfast: false, isPaid: false },
   });
   const { errors } = formState;
 
   const hasBreakfast = watch("hasBreakfast");
   const isPaid = watch("isPaid");
+  const cabinId = watch("cabinId");
+  const selectedCabin = cabins?.find(c => c.id === Number(cabinId));
+  const maxCapacity = selectedCabin?.maxCapacity || 999;
 
   function onSubmit(data) {
     const bookingData = {
@@ -73,7 +82,12 @@ function CreateBookingForm({ bookingToEdit = {}, onCloseModal }) {
 
       <FormRow label="Number of guests" error={errors?.numGuests?.message}>
         <Input type="number" id="numGuests" disabled={isWorking} min={1}
-          {...register("numGuests", { required: "This field is required", min: { value: 1, message: "At least 1 guest" } })} />
+          {...register("numGuests", {
+            required: "This field is required",
+            min: { value: 1, message: "At least 1 guest" },
+            validate: (value) =>
+              Number(value) <= maxCapacity || `Max ${maxCapacity} guests for this cabin`,
+          })} />
       </FormRow>
 
       <FormRow label="Cabin" error={errors?.cabinId?.message}>

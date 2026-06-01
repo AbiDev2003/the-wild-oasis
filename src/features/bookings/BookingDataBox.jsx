@@ -5,6 +5,8 @@ import {
   HiOutlineCheckCircle,
   HiOutlineCurrencyDollar,
   HiOutlineHomeModern,
+  HiOutlineArrowDownOnSquare,
+  HiOutlineArrowUpOnSquare,
 } from "react-icons/hi2";
 
 import DataItem from "../../ui/DataItem";
@@ -115,6 +117,8 @@ function BookingDataBox({ booking }) {
     hasBreakfast,
     observations,
     isPaid,
+    checkInAt,
+    checkOutAt,
     guests: { fullName: guestName, email, country, countryFlag, nationalID },
     cabins: { name: cabinName },
   } = booking;
@@ -161,6 +165,24 @@ function BookingDataBox({ booking }) {
 
         <DataItem icon={<HiOutlineCheckCircle />} label="Breakfast included?">
           {hasBreakfast ? "Yes" : "No"}
+        </DataItem>
+
+        <DataItem
+          icon={<HiOutlineArrowDownOnSquare />}
+          label="Checked in"
+        >
+          {checkInAt
+            ? format(new Date(checkInAt), "MMM dd yyyy, p")
+            : "\u2014"}
+        </DataItem>
+
+        <DataItem
+          icon={<HiOutlineArrowUpOnSquare />}
+          label="Checked out"
+        >
+          {checkOutAt
+            ? format(new Date(checkOutAt), "MMM dd yyyy, p")
+            : "\u2014"}
         </DataItem>
 
         <Price isPaid={isPaid}>

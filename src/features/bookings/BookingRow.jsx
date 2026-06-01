@@ -126,10 +126,12 @@ function BookingRow({ booking }) {
               </Menus.Button>
             )}
 
-            <Modal.Open opens="edit">
-              <Menus.Button icon={<HiPencil />}>Edit booking</Menus.Button>
-            </Modal.Open>
-            
+            {(status === "unconfirmed" || status === "checked-in") && (
+              <Modal.Open opens="edit">
+                <Menus.Button icon={<HiPencil />}>Edit booking</Menus.Button>
+              </Modal.Open>
+            )}
+
             <Modal.Open opens="delete">
               <Menus.Button icon={<HiTrash />}>Delete booking</Menus.Button>
             </Modal.Open>

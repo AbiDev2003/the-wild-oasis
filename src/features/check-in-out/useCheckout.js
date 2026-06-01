@@ -9,6 +9,7 @@ export function useCheckout() {
     mutationFn: (bookingId) =>
       updateBooking(bookingId, {
         status: "checked-out",
+        checkOutAt: new Date().toISOString(),
       }),
     onSuccess: (data) => {
       toast.success(`Booking #${data.id} successfully checked out`);
