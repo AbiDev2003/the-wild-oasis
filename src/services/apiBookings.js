@@ -1,3 +1,4 @@
+import { differenceInDays, parseISO } from "date-fns";
 import { PAGE_SIZE } from "../utils/constants";
 import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
@@ -117,6 +118,81 @@ export async function updateBooking(id, obj) {
     console.error(error);
     throw new Error("Booking could not be updated");
   }
+  return data;
+}
+
+export async function createUpdateBooking(newBooking, id) {
+  let guestId;
+
+  if (newBooking.guestName && newBooking.guestEmail) {
+    const { data: existingGuest } = await supabase
+      .from("guests")
+      .select("id")
+      .eq("email", newBooking.guestEmail)
+      .maybeSingle();
+
+    if (existingGuest) {
+      guestId = existingGuest.id; //if the guest already exists, we use the existing guest id, otherwise we create a new guest and use the new guest id. This way we avoid creating duplicate guests with the same email.
+    } else {
+      const { data: createdGuest, error: guestError } = await supabase
+        .from("guests")
+        .insert([{ fullName: newBooking.guestName, email: newBooking.guestEmail }])
+        .select("id")
+        .single();
+
+      if (guestError) throw new Error("Guest could not be created");
+      guestId = createdGuest.id;
+    }
+  }
+
+  const bookingForDb = { ...newBooking, guestId };
+  delete bookingForDb.guestName; // we don't want to store the guest name in the bookings table, we only want to store the guest id, and we can get the guest name from the guests table when we need it. This way we avoid data duplication and potential inconsistencies.
+  delete bookingForDb.guestEmail; // same for guest email too.
+
+  const { data: cabin } = await supabase
+    .from("cabins")
+    .select("regularPrice, discount")
+    .eq("id", bookingForDb.cabinId)
+    .single();
+
+  const numNights = differenceInDays(
+    parseISO(bookingForDb.endDate),
+    parseISO(bookingForDb.startDate),
+  );
+
+  const cabinPrice = numNights * (cabin.regularPrice - cabin.discount);
+
+  const { data: settings } = await supabase
+    .from("settings")
+    .select("breakfastPrice")
+    .single();
+
+  const extrasPrice = bookingForDb.hasBreakfast
+    ? numNights * settings.breakfastPrice * bookingForDb.numGuests
+    : 0;
+
+  const totalPrice = cabinPrice + extrasPrice;
+
+  const bookingData = {
+    ...bookingForDb,
+    numNights,
+    cabinPrice,
+    extrasPrice,
+    totalPrice,
+  };
+
+  let query = supabase.from("bookings");
+
+  if (!id) query = query.insert([bookingData]);
+  if (id) query = query.update(bookingData).eq("id", id);
+
+  const { data, error } = await query.select().single();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Booking could not be saved");
+  }
+
   return data;
 }
 
