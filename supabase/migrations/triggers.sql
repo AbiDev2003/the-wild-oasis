@@ -22,7 +22,7 @@ BEGIN
   UPDATE bookings
   SET
     "cabinPrice" = "numNights" * (NEW."regularPrice" - NEW."discount"),
-    "totalPrice" = "numNights" * (NEW."regularPrice" - NEW."discount") + "extrasPrice"
+    "totalPrice" = "numNights" * (NEW."regularPrice" - NEW."discount") + "extrasPrice" + COALESCE("miscellaneousPrice", 0)
   WHERE "cabinId" = NEW.id AND "status" != 'checked-out';
   RETURN NEW;
 END;
@@ -49,7 +49,7 @@ BEGIN
   UPDATE bookings
   SET
     "extrasPrice" = "numNights" * NEW."breakfastPrice" * "numGuests",
-    "totalPrice" = "cabinPrice" + "numNights" * NEW."breakfastPrice" * "numGuests"
+    "totalPrice" = "cabinPrice" + "numNights" * NEW."breakfastPrice" * "numGuests" + COALESCE("miscellaneousPrice", 0)
   WHERE "hasBreakfast" = true AND "status" != 'checked-out';
   RETURN NEW;
 END;

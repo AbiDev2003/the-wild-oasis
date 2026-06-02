@@ -167,19 +167,15 @@ function BookingDataBox({ booking }) {
           {hasBreakfast ? "Yes" : "No"}
         </DataItem>
 
-        <DataItem
-          icon={<HiOutlineArrowDownOnSquare />}
-          label="Checked in"
-        >
-          {checkInAt
-            ? format(new Date(checkInAt), "MMM dd yyyy, p")
-            : "\u2014"}
+        <DataItem icon={<HiOutlineCurrencyDollar />} label="Miscellaneous price">
+          {formatCurrency(booking.miscellaneousPrice || 0)}
         </DataItem>
 
-        <DataItem
-          icon={<HiOutlineArrowUpOnSquare />}
-          label="Checked out"
-        >
+        <DataItem icon={<HiOutlineArrowDownOnSquare />} label="Checked in">
+          {checkInAt ? format(new Date(checkInAt), "MMM dd yyyy, p") : "\u2014"}
+        </DataItem>
+
+        <DataItem icon={<HiOutlineArrowUpOnSquare />} label="Checked out">
           {checkOutAt
             ? format(new Date(checkOutAt), "MMM dd yyyy, p")
             : "\u2014"}
@@ -192,7 +188,9 @@ function BookingDataBox({ booking }) {
             {hasBreakfast &&
               ` (${formatCurrency(cabinPrice)} cabin + ${formatCurrency(
                 extrasPrice,
-              )} breakfast)`}
+              )} breakfast`}
+            {booking.miscellaneousPrice > 0 &&
+              ` + ${formatCurrency(booking.miscellaneousPrice)} misc.)`}
           </DataItem>
 
           <p>{isPaid ? "Paid" : "Will pay at property"}</p>

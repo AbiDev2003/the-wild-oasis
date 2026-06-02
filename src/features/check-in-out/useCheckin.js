@@ -8,12 +8,13 @@ export function useCheckin() {
   const navigate = useNavigate(); 
 
   const { mutate: checkin, isPending: isCheckingIn } = useMutation({
-    mutationFn: ({bookingId, breakfast}) =>
+    mutationFn: ({bookingId, breakfast, ...extra}) =>
       updateBooking(bookingId, {
         status: "checked-in",
         isPaid: true,
         checkInAt: new Date().toISOString(),
-        ...breakfast
+        ...breakfast, 
+        ...extra,
       }),
     onSuccess: (data) => {
       toast.success(`Booking #${data.id} successfully checked in`);

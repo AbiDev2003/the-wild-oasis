@@ -47,6 +47,7 @@ function CreateBookingForm({ bookingToEdit = {}, onCloseModal }) {
       isPaid: !!isPaid, //!! means when isPaid is true, it will be true, when isPaid is false, it will be false. This is to ensure that the value is always a boolean. 
       status: data.status,
       observations: data.observations,
+      miscellaneousPrice: data.miscellaneousPrice,
       guestName: data.guestName,
       guestEmail: data.guestEmail,
     };
@@ -132,6 +133,14 @@ function CreateBookingForm({ bookingToEdit = {}, onCloseModal }) {
       <FormRow label="Observations" error={errors?.observations?.message}>
         <Textarea id="observations" disabled={isWorking}
           {...register("observations")} />
+      </FormRow>
+
+      <FormRow label="Miscellaneous price (Optional)" error={errors?.miscellaneousPrice?.message}>
+        <Input type="number" id="miscellaneousPrice" disabled={isWorking} min={0}
+          {...register("miscellaneousPrice", {
+            setValueAs: (v) => (v === "" ? 0 : Number(v)),
+            min: { value: 0, message: "Price cannot be negative" }
+          })} />
       </FormRow>
 
       <FormRow>

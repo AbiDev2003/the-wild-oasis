@@ -171,7 +171,7 @@ export async function createUpdateBooking(newBooking, id) {
     ? numNights * settings.breakfastPrice * bookingForDb.numGuests
     : 0;
 
-  const totalPrice = cabinPrice + extrasPrice;
+  const totalPrice = cabinPrice + extrasPrice + Number(bookingForDb.miscellaneousPrice || 0);
 
   const bookingData = {
     ...bookingForDb,

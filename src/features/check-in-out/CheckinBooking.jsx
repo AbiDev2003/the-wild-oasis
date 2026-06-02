@@ -6,6 +6,7 @@ import Heading from "../../ui/Heading";
 import ButtonGroup from "../../ui/ButtonGroup";
 import Button from "../../ui/Button";
 import ButtonText from "../../ui/ButtonText";
+import Input from "../../ui/Input";
 
 import { useMoveBack } from "../../hooks/useMoveBack";
 import { useBooking } from "../bookings/useBooking";
@@ -15,6 +16,8 @@ import Checkbox from "./../../ui/Checkbox.jsx";
 import { formatCurrency } from "../../utils/helpers.js";
 import { useCheckin } from "./useCheckin.js";
 import { useSettings } from "../settings/useSettings.js";
+import { HiOutlineCurrencyDollar } from "react-icons/hi2";
+import DataItem from "./../../ui/DataItem";
 
 const Box = styled.div`
   /* Box */
@@ -42,6 +45,7 @@ function CheckinBooking() {
 
   const moveBack = useMoveBack();
   const { checkin, isCheckingIn } = useCheckin();
+  const [miscPrice, setMiscPrice] = useState(0);
 
   if (isLoading || isLoadingSettings) return <Spinner />;
 
@@ -59,18 +63,25 @@ function CheckinBooking() {
 
   function handleCheckin() {
     if (!confirmPaid) return;
+
+    let newTotalPrice = totalPrice;
+    const breakfast = {};
+
     if (addBreakfast) {
-      checkin({
-        bookingId,
-        breakfast: {
-          hasBreakfast: true,
-          extrasPrice: optionalBreakfastPrice,
-          totalPrice: totalPrice + optionalBreakfastPrice,
-        },
-      });
-    } else {
-      checkin({ bookingId, breakfast: {} });
+      breakfast.hasBreakfast = true;
+      breakfast.extrasPrice = optionalBreakfastPrice;
+      newTotalPrice += optionalBreakfastPrice;
     }
+
+    const extra = {};
+    if (miscPrice > 0) {
+      extra.miscellaneousPrice = miscPrice;
+      newTotalPrice += miscPrice;
+    }
+
+    extra.totalPrice = newTotalPrice;
+
+    checkin({ bookingId, breakfast, ...extra });
   }
   return (
     <>
@@ -97,15 +108,31 @@ function CheckinBooking() {
       )}
 
       <Box>
+        <DataItem
+          icon={<HiOutlineCurrencyDollar />}
+          label="Additional miscellaneous price"
+        >
+          <Input
+            type="number"
+            placeholder="0"
+            value={miscPrice}
+            onChange={(e) => setMiscPrice(Number(e.target.value))}
+            min="0"
+            step="0.01"
+          />
+        </DataItem>
+      </Box>
+
+      <Box>
         <Checkbox
           checked={confirmPaid}
           disabled={confirmPaid || isCheckingIn}
           onChange={() => setConfirmPaid((confirm) => !confirm)}
         >
           I confirm that {guests.fullName} has paid the total amount of{" "}
-          {!addBreakfast
+          {!addBreakfast && !miscPrice
             ? formatCurrency(totalPrice)
-            : `${formatCurrency(totalPrice + optionalBreakfastPrice)} (${formatCurrency(totalPrice)} + ${formatCurrency(optionalBreakfastPrice)})`}
+            : `${formatCurrency(totalPrice + (addBreakfast ? optionalBreakfastPrice : 0) + miscPrice)}${` (${formatCurrency(totalPrice)}`}${addBreakfast ? ` + ${formatCurrency(optionalBreakfastPrice)} breakfast` : ""}${miscPrice > 0 ? ` + ${formatCurrency(miscPrice)} misc.` : ""})`}
         </Checkbox>
       </Box>
 
