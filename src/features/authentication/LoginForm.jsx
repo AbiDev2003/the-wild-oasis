@@ -5,6 +5,8 @@ import Input from "../../ui/Input";
 import FormRowVertical from "../../ui/FormRowVertical";
 import { useLogin } from "./useLogin";
 import SpinnerMini from "../../ui/SpinnerMini";
+import { Link } from "react-router";
+import PasswordInput from "../../ui/PasswordInput";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -15,12 +17,15 @@ function LoginForm() {
     e.preventDefault();
     if (!email || !password) return;
 
-    login({ email, password }, {
-      onSettled: () => {
-        setEmail(''); 
-        setPassword('')
+    login(
+      { email, password },
+      {
+        onSettled: () => {
+          setEmail("");
+          setPassword("");
+        },
       },
-    });
+    );
   }
 
   return (
@@ -37,8 +42,7 @@ function LoginForm() {
         />
       </FormRowVertical>
       <FormRowVertical label="Password">
-        <Input
-          type="password"
+        <PasswordInput
           id="password"
           autoComplete="current-password"
           value={password}
@@ -46,8 +50,11 @@ function LoginForm() {
           disabled={isPending}
         />
       </FormRowVertical>
+      <Link to="/forgot-password" style={{ fontSize: "1.2rem", textDecoration: "underline" }}>
+        Forgot password?
+      </Link>
       <FormRowVertical>
-        <Button size="large">{!isPending ? "Login" : <SpinnerMini/>}</Button>
+        <Button size="large">{!isPending ? "Login" : <SpinnerMini />}</Button>
       </FormRowVertical>
     </Form>
   );

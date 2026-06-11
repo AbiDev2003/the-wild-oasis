@@ -72,5 +72,21 @@ export async function updateCurrentUser({ password, fullName, avatar }) {
   });
 
   if (error2) throw new Error(error2.message);
-  return updatedUser; 
+  return updatedUser;
+}
+
+// reset password
+
+export async function resetPassword(email) {
+  let { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/reset-password`,
+  });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function updatePassword(password) {
+  const { data, error } = await supabase.auth.updateUser({ password });
+  if (error) throw new Error(error.message);
+  return data;
 }

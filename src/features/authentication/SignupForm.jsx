@@ -4,6 +4,7 @@ import Form from "../../ui/Form";
 import FormRow from "../../ui/FormRow";
 import Input from "../../ui/Input";
 import { useSignup } from "./useSignup";
+import PasswordInput from "../../ui/PasswordInput";
 
 // Email regex: /\S+@\S+\.\S+/
 
@@ -51,7 +52,7 @@ function SignupForm() {
         label="Password (min 8 characters)"
         error={errors?.password?.message}
       >
-        <Input
+        <PasswordInput
           type="password"
           id="password"
           disabled={isPending}
@@ -66,7 +67,7 @@ function SignupForm() {
       </FormRow>
 
       <FormRow label="Repeat password" error={errors?.passwordConfirm?.message}>
-        <Input
+        <PasswordInput
           type="password"
           id="passwordConfirm"
           disabled={isPending}

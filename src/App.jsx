@@ -16,7 +16,8 @@ import Booking from "./pages/Booking.jsx";
 import CheckIn from "./pages/CheckIn.jsx";
 import ProtectedRoute from "./ui/ProtectedRoute.jsx";
 import DarkModeProvider from "./context/DarkModeContext.jsx";
-
+import ForgotPassword from "./pages/ForgotPassword.jsx";
+import ResetPassword from './pages/ResetPassword.jsx';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -53,6 +54,8 @@ function App() {
               <Route path="account" element={<Account />} />
             </Route>
             <Route path="login" element={<Login />} />
+            <Route path="forgot-password" element={<ForgotPassword />} />
+            <Route path="reset-password" element={<ResetPassword />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </BrowserRouter>
