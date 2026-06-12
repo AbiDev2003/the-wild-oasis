@@ -7,8 +7,9 @@ export function useEditBooking() {
 
   const { mutate: editBooking, isPending: isEditing } = useMutation({
     mutationFn: ({ newBookingData, id }) => createUpdateBooking(newBookingData, id),
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success("Booking successfully edited");
+      queryClient.setQueryData(["bookings", data.id], data); //update the booking details without refetching, from stale to fresh with the new data
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
     },
     onError: (err) => toast.error(err.message),

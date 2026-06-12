@@ -41,6 +41,12 @@ CREATE TRIGGER cabin_price_update
 --      (e.g., $15 → $20). All existing non-checked-out bookings
 --      that include breakfast should update extrasPrice and
 --      totalPrice to reflect the new rate.
+--
+-- 2024-06-12: Updated formula from all-or-nothing
+--   (numNights * numGuests * breakfastPrice) to flexible
+--   per-guest-day model (numBreakfast * breakfastPrice).
+--   The column hasBreakfast is being phased out; we now
+--   check numBreakfast > 0 instead.
 -- ============================================================
 
 CREATE OR REPLACE FUNCTION recalculate_breakfast_prices()
@@ -48,9 +54,11 @@ RETURNS trigger AS $$
 BEGIN
   UPDATE bookings
   SET
-    "extrasPrice" = "numNights" * NEW."breakfastPrice" * "numGuests",
-    "totalPrice" = "cabinPrice" + "numNights" * NEW."breakfastPrice" * "numGuests" + COALESCE("miscellaneousPrice", 0)
-  WHERE "hasBreakfast" = true AND "status" != 'checked-out';
+    -- New formula: total breakfast guest-days × price per serving
+    -- Example: 2 guests × 2 days + 1 guest × 3 days = 7 breakfasts
+    "extrasPrice" = "numBreakfast" * NEW."breakfastPrice",
+    "totalPrice" = "cabinPrice" + "numBreakfast" * NEW."breakfastPrice" + COALESCE("miscellaneousPrice", 0)
+  WHERE "numBreakfast" > 0 AND "status" != 'checked-out';
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

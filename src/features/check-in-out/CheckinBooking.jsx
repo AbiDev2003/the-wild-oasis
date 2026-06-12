@@ -30,17 +30,17 @@ const Box = styled.div`
 function CheckinBooking() {
   const [confirmPaid, setConfirmPaid] = useState(false);
   const { booking, isLoading } = useBooking();
-  const [addBreakfast, setAddBreakfast] = useState();
+  const [numOfBreakfast, setNumOfBreakfast] = useState(0);
   const { settings, isPending: isLoadingSettings } = useSettings();
 
-  // Before (ESLint error - react-hooks/set-state-in-effect):
-  // useEffect(() => setConfirmPaid(booking?.isPaid ?? false), [booking]);
-  // After: Sync state during render instead of in an effect to avoid cascading renders.
   const prevBookingId = useRef(booking?.id);
 
   if (prevBookingId.current !== booking?.id) {
     prevBookingId.current = booking?.id;
     setConfirmPaid(booking?.isPaid ?? false);
+    // Sync numBreakfast from booking (support old hasBreakfast fallback for migration)
+    const val = booking?.numBreakfast ?? (booking?.hasBreakfast ? booking.numNights * booking.numGuests : 0);
+    setNumOfBreakfast(val);
   }
 
   const moveBack = useMoveBack();
@@ -52,36 +52,34 @@ function CheckinBooking() {
   const {
     id: bookingId,
     guests,
-    totalPrice,
-    numGuests,
-    hasBreakfast,
-    numNights,
+    // totalPrice,
+    // numGuests,
+    // hasBreakfast,
+    // numNights,
+    cabinPrice,
+    // numBreakfast: existingNumBreakfast,
+    miscellaneousPrice: existingMiscPrice,
   } = booking;
 
-  const optionalBreakfastPrice =
-    settings.breakfastPrice * numNights * numGuests;
+  const breakfastCost = numOfBreakfast * settings.breakfastPrice;
+  const miscTotal = miscPrice > 0 ? miscPrice : (existingMiscPrice || 0);
+  const newTotalPrice = cabinPrice + breakfastCost + miscTotal;
 
   function handleCheckin() {
     if (!confirmPaid) return;
 
-    let newTotalPrice = totalPrice;
-    const breakfast = {};
+    const updates = {
+      numBreakfast: numOfBreakfast,
+      hasBreakfast: numOfBreakfast > 0,
+      extrasPrice: breakfastCost,
+      totalPrice: newTotalPrice,
+    };
 
-    if (addBreakfast) {
-      breakfast.hasBreakfast = true;
-      breakfast.extrasPrice = optionalBreakfastPrice;
-      newTotalPrice += optionalBreakfastPrice;
-    }
-
-    const extra = {};
     if (miscPrice > 0) {
-      extra.miscellaneousPrice = miscPrice;
-      newTotalPrice += miscPrice;
+      updates.miscellaneousPrice = miscPrice;
     }
 
-    extra.totalPrice = newTotalPrice;
-
-    checkin({ bookingId, breakfast, ...extra });
+    checkin({ bookingId, ...updates });
   }
   return (
     <>
@@ -92,20 +90,21 @@ function CheckinBooking() {
 
       <BookingDataBox booking={booking} />
 
-      {!hasBreakfast && (
-        <Box>
-          <Checkbox
-            checked={addBreakfast}
-            onChange={() => {
-              setAddBreakfast((add) => !add);
+      <Box>
+        <DataItem icon={<HiOutlineCurrencyDollar />} label="Number of breakfasts">
+          <Input
+            type="number"
+            placeholder="0"
+            value={numOfBreakfast}
+            onChange={(e) => {
+              setNumOfBreakfast(parseInt(e.target.value) || 0);
               setConfirmPaid(false);
             }}
-            id="breakfast"
-          >
-            Want to add breakfast for {formatCurrency(optionalBreakfastPrice)}?
-          </Checkbox>
-        </Box>
-      )}
+            min="0"
+            step="1"
+          />
+        </DataItem>
+      </Box>
 
       <Box>
         <DataItem
@@ -130,9 +129,10 @@ function CheckinBooking() {
           onChange={() => setConfirmPaid((confirm) => !confirm)}
         >
           I confirm that {guests.fullName} has paid the total amount of{" "}
-          {!addBreakfast && !miscPrice
-            ? formatCurrency(totalPrice)
-            : `${formatCurrency(totalPrice + (addBreakfast ? optionalBreakfastPrice : 0) + miscPrice)}${` (${formatCurrency(totalPrice)}`}${addBreakfast ? ` + ${formatCurrency(optionalBreakfastPrice)} breakfast` : ""}${miscPrice > 0 ? ` + ${formatCurrency(miscPrice)} misc.` : ""})`}
+          {formatCurrency(newTotalPrice)}
+          {` (${formatCurrency(cabinPrice)} cabin`}
+          {numOfBreakfast > 0 ? ` + ${formatCurrency(breakfastCost)} breakfast` : ""}
+          {miscTotal > 0 ? ` + ${formatCurrency(miscTotal)} misc.` : ""})
         </Checkbox>
       </Box>
 

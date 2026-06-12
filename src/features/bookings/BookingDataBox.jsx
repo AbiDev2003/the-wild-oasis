@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { format, isToday } from "date-fns";
 import {
   HiOutlineChatBubbleBottomCenterText,
-  HiOutlineCheckCircle,
+  // HiOutlineCheckCircle,
   HiOutlineCurrencyDollar,
   HiOutlineHomeModern,
   HiOutlineArrowDownOnSquare,
@@ -114,7 +114,8 @@ function BookingDataBox({ booking }) {
     cabinPrice,
     extrasPrice,
     totalPrice,
-    hasBreakfast,
+    // hasBreakfast,
+    numBreakfast,
     observations,
     isPaid,
     checkInAt,
@@ -163,8 +164,12 @@ function BookingDataBox({ booking }) {
           </DataItem>
         )}
 
-        <DataItem icon={<HiOutlineCheckCircle />} label="Breakfast included?">
+        {/* <DataItem icon={<HiOutlineCheckCircle />} label="Breakfast included?">
           {hasBreakfast ? "Yes" : "No"}
+        </DataItem> */}
+
+        <DataItem icon={<HiOutlineCurrencyDollar />} label="Number of breakfasts">
+          {numBreakfast}
         </DataItem>
 
         <DataItem icon={<HiOutlineCurrencyDollar />} label="Miscellaneous price">
@@ -185,7 +190,7 @@ function BookingDataBox({ booking }) {
           <DataItem icon={<HiOutlineCurrencyDollar />} label={`Total price`}>
             {formatCurrency(totalPrice)}
 
-            {hasBreakfast &&
+            {numBreakfast > 0 &&
               ` (${formatCurrency(cabinPrice)} cabin + ${formatCurrency(
                 extrasPrice,
               )} breakfast`}

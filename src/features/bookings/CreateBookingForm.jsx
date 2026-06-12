@@ -36,7 +36,7 @@ function CreateBookingForm({ bookingToEdit = {}, onCloseModal }) {
   );
   const { errors } = formState;
 
-  const hasBreakfast = watch("hasBreakfast");
+  // const hasBreakfast = watch("hasBreakfast");
   const isPaid = watch("isPaid");
   const cabinId = watch("cabinId");
   const startDate = watch("startDate");
@@ -49,7 +49,8 @@ function CreateBookingForm({ bookingToEdit = {}, onCloseModal }) {
       endDate: data.endDate,
       cabinId: Number(data.cabinId),
       numGuests: Number(data.numGuests),
-      hasBreakfast: !!hasBreakfast,
+      // hasBreakfast: !!hasBreakfast,
+      numBreakfast: Number(data.numBreakfast) || 0,
       isPaid: !!isPaid, //!! means when isPaid is true, it will be true, when isPaid is false, it will be false. This is to ensure that the value is always a boolean.
       status: data.status,
       observations: data.observations,
@@ -227,15 +228,30 @@ function CreateBookingForm({ bookingToEdit = {}, onCloseModal }) {
         />
       </FormRow>
 
-      <FormRow>
-        <Checkbox
+      <FormRow
+        label="Number of breakfasts"
+        error={errors?.numBreakfast?.message}
+      >
+        {/* <Checkbox
           checked={hasBreakfast}
           onChange={() => setValue("hasBreakfast", !hasBreakfast)}
           id="hasBreakfast"
           disabled={isWorking}
         >
           Breakfast included?
-        </Checkbox>
+        </Checkbox> */}
+
+        {/* nu of breakfast input */}
+        <Input
+          type="number"
+          id="numBreakfast"
+          min={0}
+          placeholder="Number of breakfasts"
+          {...register("numBreakfast", {
+            setValueAs: (v) => (v === "" ? 0 : Number(v)),
+            min: { value: 0, message: "Cannot be negative" },
+          })}
+        />
       </FormRow>
 
       <FormRow>

@@ -167,8 +167,12 @@ export async function createUpdateBooking(newBooking, id) {
     .select("breakfastPrice")
     .single();
 
-  const extrasPrice = bookingForDb.hasBreakfast
-    ? numNights * settings.breakfastPrice * bookingForDb.numGuests
+  // const extrasPrice = bookingForDb.hasBreakfast
+  //   ? numNights * settings.breakfastPrice * bookingForDb.numGuests
+  //   : 0;
+
+  const extrasPrice = bookingForDb.numBreakfast
+    ? bookingForDb.numBreakfast * settings.breakfastPrice
     : 0;
 
   const totalPrice = cabinPrice + extrasPrice + Number(bookingForDb.miscellaneousPrice || 0);
