@@ -68,3 +68,81 @@ CREATE TRIGGER settings_breakfast_price_update
   AFTER UPDATE OF "breakfastPrice" ON settings
   FOR EACH ROW
   EXECUTE FUNCTION recalculate_breakfast_prices();
+
+-- ============================================================
+-- Trigger 3: Restaurant order insert/update/delete
+-- ------------------------------------------------------------
+-- Why: When a guest orders food, the booking totalPrice should
+--      include it immediately. This trigger recalculates
+--      totalPrice = cabinPrice + extrasPrice + miscellaneousPrice
+--      + SUM of all restaurant order totals for that booking.
+--      Checked-out bookings are excluded.
+-- ============================================================
+
+CREATE OR REPLACE FUNCTION update_booking_total_with_restaurant()
+RETURNS trigger AS $$
+DECLARE
+  booking_id BIGINT;
+  restaurant_sum NUMERIC;
+BEGIN
+  IF TG_OP = 'DELETE' THEN
+    booking_id := OLD."bookingid";
+  ELSE
+    booking_id := NEW."bookingid";
+  END IF;
+
+  SELECT COALESCE(SUM("totalprice"), 0) INTO restaurant_sum
+  FROM "restaurantorders"
+  WHERE "bookingid" = booking_id;
+
+  UPDATE bookings
+  SET "totalPrice" = "cabinPrice" + "extrasPrice" + COALESCE("miscellaneousPrice", 0) + restaurant_sum
+  WHERE id = booking_id AND "status" != 'checked-out';
+
+  RETURN COALESCE(NEW, OLD);
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS restaurant_orders_total_update ON "restaurantorders";
+CREATE TRIGGER restaurant_orders_total_update
+  AFTER INSERT OR UPDATE OR DELETE ON "restaurantorders"
+  FOR EACH ROW
+  EXECUTE FUNCTION update_booking_total_with_restaurant();
+
+-- ============================================================
+-- Trigger 4: Safety net — BEFORE UPDATE on bookings
+-- ------------------------------------------------------------
+-- Why: Any code path that updates bookings.totalPrice (check-in,
+--      booking edit, cabin price change, breakfast price change)
+--      may forget to include restaurant orders. This trigger
+--      automatically re-adds the restaurant sum before the write,
+--      so totalPrice is always: cabinPrice + extrasPrice +
+--      miscellaneousPrice + SUM of restaurant orders.
+--
+--      Only fires for non-checked-out bookings.
+-- ============================================================
+
+CREATE OR REPLACE FUNCTION ensure_restaurant_in_total_price()
+RETURNS trigger AS $$
+DECLARE
+  restaurant_sum NUMERIC;
+BEGIN
+  IF NEW."status" = 'checked-out' THEN
+    RETURN NEW;
+  END IF;
+
+  SELECT COALESCE(SUM("totalprice"), 0) INTO restaurant_sum
+  FROM "restaurantorders"
+  WHERE "bookingid" = NEW.id;
+
+  NEW."totalPrice" = NEW."cabinPrice" + NEW."extrasPrice" + COALESCE(NEW."miscellaneousPrice", 0) + restaurant_sum;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS ensure_restaurant_in_total_price ON bookings;
+CREATE TRIGGER ensure_restaurant_in_total_price
+  BEFORE UPDATE ON bookings
+  FOR EACH ROW
+  EXECUTE FUNCTION ensure_restaurant_in_total_price();

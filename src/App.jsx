@@ -9,6 +9,7 @@ import Cabins from "./pages/Cabins.jsx";
 import Login from "./pages/Login.jsx";
 import Users from "./pages/Users.jsx";
 import Settings from "./pages/Settings.jsx";
+import Restaurant from "./pages/Restaurant.jsx";
 import GlobalStyles from "./styles/GlobalStyles.js";
 import AppLayout from "./ui/AppLayout.jsx";
 import { Toaster } from "react-hot-toast";
@@ -52,6 +53,7 @@ function App() {
               <Route path="users" element={<Users />} />
               <Route path="settings" element={<Settings />} />
               <Route path="account" element={<Account />} />
+              <Route path="restaurant" element={<Restaurant />} />
             </Route>
             <Route path="login" element={<Login />} />
             <Route path="forgot-password" element={<ForgotPassword />} />

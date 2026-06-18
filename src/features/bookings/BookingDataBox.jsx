@@ -13,6 +13,7 @@ import DataItem from "../../ui/DataItem";
 import { Flag } from "../../ui/Flag";
 
 import { formatDistanceFromNow, formatCurrency } from "../../utils/helpers";
+import { useRestaurantOrders } from "../restaurant/useRestaurantOrders";
 
 const StyledBookingDataBox = styled.section`
   /* Box */
@@ -118,11 +119,26 @@ function BookingDataBox({ booking }) {
     numBreakfast,
     observations,
     isPaid,
+    status,
     checkInAt,
     checkOutAt,
     guests: { fullName: guestName, email, country, countryFlag, nationalID },
     cabins: { name: cabinName },
   } = booking;
+
+  const { isLoading: isLoadingOrders, restaurantOrders } = useRestaurantOrders(
+    status === "checked-in" ? booking.id : null,
+  );
+  const restaurantTotal = restaurantOrders?.reduce((sum, o) => sum + (o.totalprice || 0), 0) || 0;
+
+  const breakdownParts = [
+    numBreakfast > 0 &&
+      `${formatCurrency(cabinPrice)} cabin + ${formatCurrency(extrasPrice)} breakfast`,
+    booking.miscellaneousPrice > 0 &&
+      `${formatCurrency(booking.miscellaneousPrice)} misc.`,
+    status === "checked-in" && restaurantTotal > 0 &&
+      `${formatCurrency(restaurantTotal)} restaurant`,
+  ].filter(Boolean);
 
   return (
     <StyledBookingDataBox>
@@ -176,6 +192,12 @@ function BookingDataBox({ booking }) {
           {formatCurrency(booking.miscellaneousPrice || 0)}
         </DataItem>
 
+        {status === "checked-in" && (
+          <DataItem icon={<HiOutlineCurrencyDollar />} label="Restaurant">
+            {isLoadingOrders ? "..." : formatCurrency(restaurantTotal)}
+          </DataItem>
+        )}
+
         <DataItem icon={<HiOutlineArrowDownOnSquare />} label="Checked in">
           {checkInAt ? format(new Date(checkInAt), "MMM dd yyyy, p") : "\u2014"}
         </DataItem>
@@ -189,13 +211,7 @@ function BookingDataBox({ booking }) {
         <Price isPaid={isPaid}>
           <DataItem icon={<HiOutlineCurrencyDollar />} label={`Total price`}>
             {formatCurrency(totalPrice)}
-
-            {numBreakfast > 0 &&
-              ` (${formatCurrency(cabinPrice)} cabin + ${formatCurrency(
-                extrasPrice,
-              )} breakfast`}
-            {booking.miscellaneousPrice > 0 &&
-              ` + ${formatCurrency(booking.miscellaneousPrice)} misc.)`}
+            {breakdownParts.length > 0 && ` (${breakdownParts.join(" + ")})`}
           </DataItem>
 
           <p>{isPaid ? "Paid" : "Will pay at property"}</p>

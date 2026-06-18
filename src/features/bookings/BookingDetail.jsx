@@ -18,6 +18,7 @@ import Modal from "./../../ui/Modal";
 import ConfirmDelete from "../../ui/ConfirmDelete";
 import { useDeleteBooking } from "./useDeleteBooking";
 import Empty from "../../ui/Empty";
+import RestaurantOrderBox from "../restaurant/RestaurantOrderBox";
 
 const HeadingGroup = styled.div`
   display: flex;
@@ -56,6 +57,8 @@ function BookingDetail() {
       </Row>
 
       <BookingDataBox booking={booking} />
+
+      {status === "checked-in" && <RestaurantOrderBox bookingId={bookingId} />}
 
       <ButtonGroup>
         {status === "unconfirmed" && (
