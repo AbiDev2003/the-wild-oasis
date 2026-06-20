@@ -17,17 +17,20 @@ export function useBookings() {
   const sortByRaw = searchParams.get("sortBy") || "startDate-desc";
   const [field, direction] = sortByRaw.split("-");
   const sortBy = { field, direction };
-
+  
   // pagination
   const page = !searchParams.get("page") ? 1 : Number(searchParams.get("page"));
 
+  // search
+  const search = searchParams.get("search") || null; 
+  
   const {
     isLoading,
     data: { data: bookings, count } = {},
     // error,
   } = useQuery({
-    queryKey: ["bookings", filter, sortBy, page], //this is like a dependancy array, it is used to cache the data and to refetch the data when the queryKey changes
-    queryFn: () => getBookings({ filter, sortBy, page }),
+    queryKey: ["bookings", filter, sortBy, page, search], //this is like a dependancy array, it is used to cache the data and to refetch the data when the queryKey changes
+    queryFn: () => getBookings({ filter, sortBy, page, search }),
   });
 
   // PRE-FETCHING: we can pre-fetch the next page of bookings when the user is on the current page, so that when the user clicks on the next button, the data is already in the cache and it will be instant. This is a great way to improve the user experience and to make the app feel faster. We can use the useQueryClient hook to get the query client and then we can use the prefetchQuery method to pre-fetch the next page of bookings.
@@ -36,15 +39,15 @@ export function useBookings() {
   // for next page
   if (page < pageCount)
     queryClient.prefetchQuery({
-      queryKey: ["bookings", filter, sortBy, page + 1],
-      queryFn: () => getBookings({ filter, sortBy, page: page + 1 }),
+      queryKey: ["bookings", filter, sortBy, page + 1, search],
+      queryFn: () => getBookings({ filter, sortBy, page: page + 1, search }),
     });
 
   // for previous page
   if (page > 1) {
     queryClient.prefetchQuery({
-      queryKey: ["bookings", filter, sortBy, page - 1],
-      queryFn: () => getBookings({ filter, sortBy, page: page - 1 }),
+      queryKey: ["bookings", filter, sortBy, page - 1, search],
+      queryFn: () => getBookings({ filter, sortBy, page: page - 1, search }),
     });
   }
   return { isLoading, bookings, count };

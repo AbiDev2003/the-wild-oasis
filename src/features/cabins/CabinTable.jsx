@@ -11,7 +11,7 @@ function CabinTable() {
   const [searchParams] = useSearchParams();
 
   if (isLoading) return <Spinner />;
-  if(!cabins.length) return <Empty resourceName = "cabins"/>
+  if (!cabins.length) return <Empty resourceName="cabins" />;
 
   // 1. filterValue can be 'all', 'no-discount' or 'with-discount'
   const filterValue = searchParams.get("discount") || "all";
@@ -23,7 +23,17 @@ function CabinTable() {
   if (filterValue === "with-discount")
     filteredCabins = cabins.filter((cabin) => cabin.discount > 0);
 
-  // 2. SORTING
+  // 2: Search filter
+  const searchValue = searchParams.get("search") || "";
+  if (searchValue) {
+    filteredCabins = filteredCabins.filter((cabin) =>
+      cabin.name?.toLowerCase().includes(searchValue.toLowerCase()),
+    );
+  }
+
+  if (!filteredCabins.length) return <Empty resourceName="cabins" />;
+
+  // 3. SORTING
   const sortBy = searchParams.get("sortBy") || "startDate-asc";
   const [field, direction] = sortBy.split("-");
 

@@ -1,9 +1,11 @@
 import Filter from "../../ui/Filter"
+import SearchBar from "../../ui/SearchBar.jsx";
 import SortBy from "../../ui/SortBy.jsx";
 import TableOperations from './../../ui/TableOperations.jsx';
 function CabinTableOperations() {
     return (
         <TableOperations>
+            <SearchBar placeholder="Search by cabin name..." />
             <Filter 
                 filterField="discount"
                 options={[

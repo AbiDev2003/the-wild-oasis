@@ -3,7 +3,7 @@ import { PAGE_SIZE } from "../utils/constants";
 import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
 
-export async function getBookings({ filter, sortBy, page }) {
+export async function getBookings({ filter, sortBy, page, search }) {
   let query = supabase
     .from("bookings")
     .select(
@@ -13,6 +13,34 @@ export async function getBookings({ filter, sortBy, page }) {
 
   // if(filter !== null) query = query.eq(filter.field, filter.value)
   if (filter) query = query[filter.method || "eq"](filter.field, filter.value);
+
+  if (search) {
+    const { data: matchingGuests } = await supabase
+      .from("guests")
+      .select("id")
+      .or(`fullName.ilike.%${search}%,email.ilike.%${search}%`);
+
+    const { data: matchingCabins } = await supabase
+      .from("cabins")
+      .select("id")
+      .or(`name.ilike.%${search}%`);
+
+    const guestIds = matchingGuests?.map((g) => g.id) || [];
+    const cabinIds = matchingCabins?.map((c) => c.id) || [];
+
+    const filters = [];
+    if (!isNaN(Number(search))) {
+      filters.push(`id.eq.${Number(search)}`);
+    }
+    if (guestIds.length > 0) {
+      filters.push(`guestId.in.(${guestIds.join(",")})`);
+    }
+    if (cabinIds.length > 0) {
+      filters.push(`cabinId.in.(${cabinIds.join(",")})`);
+    }
+
+    query = query.or(filters.length > 0 ? filters.join(",") : "id.eq.0");
+  }
 
   if (sortBy)
     query = query.order(sortBy.field, {
@@ -136,7 +164,9 @@ export async function createUpdateBooking(newBooking, id) {
     } else {
       const { data: createdGuest, error: guestError } = await supabase
         .from("guests")
-        .insert([{ fullName: newBooking.guestName, email: newBooking.guestEmail }])
+        .insert([
+          { fullName: newBooking.guestName, email: newBooking.guestEmail },
+        ])
         .select("id")
         .single();
 
@@ -175,7 +205,8 @@ export async function createUpdateBooking(newBooking, id) {
     ? bookingForDb.numBreakfast * settings.breakfastPrice
     : 0;
 
-  const totalPrice = cabinPrice + extrasPrice + Number(bookingForDb.miscellaneousPrice || 0);
+  const totalPrice =
+    cabinPrice + extrasPrice + Number(bookingForDb.miscellaneousPrice || 0);
 
   const bookingData = {
     ...bookingForDb,

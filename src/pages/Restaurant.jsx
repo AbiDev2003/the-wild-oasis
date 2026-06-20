@@ -1,15 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { HiEye, HiArrowUpOnSquare } from "react-icons/hi2";
 import { getBookings } from "../services/apiBookings";
+import { useCheckout } from "../features/check-in-out/useCheckout";
+
 import Heading from "../ui/Heading";
 import Row from "../ui/Row";
 import Spinner from "../ui/Spinner";
 import Empty from "../ui/Empty";
 import Menus from "../ui/Menus";
 import RestaurantOrderBox from "../features/restaurant/RestaurantOrderBox";
-import { useCheckout } from "../features/check-in-out/useCheckout";
+import TableOperations from "./../ui/TableOperations";
+import SearchBar from "../ui/SearchBar";
 
 const StyledTable = styled.div`
   border: 1px solid var(--color-grey-200);
@@ -21,7 +24,7 @@ const StyledTable = styled.div`
 
 const TableHeader = styled.header`
   display: grid;
-  grid-template-columns: 1.5fr 1fr 2.5fr 1fr;
+  grid-template-columns: 0.5fr 1.5fr 1fr 2.5fr 1fr;
   column-gap: 2.4rem;
   align-items: center;
 
@@ -36,7 +39,7 @@ const TableHeader = styled.header`
 
 const TableRow = styled.div`
   display: grid;
-  grid-template-columns: 1.5fr 1fr 2.5fr 1fr;
+  grid-template-columns: 0.5fr 1.5fr 1fr 2.5fr 1fr;
   column-gap: 2.4rem;
   align-items: center;
   padding: 1.6rem 2.4rem;
@@ -49,23 +52,44 @@ const TableRow = styled.div`
 function Restaurant() {
   const navigate = useNavigate();
   const { checkout } = useCheckout();
+  const [searchParams] = useSearchParams();
 
   const { isLoading, data: { data: bookings } = {} } = useQuery({
     queryKey: ["bookings", "checked-in"],
-    queryFn: () => getBookings({ filter: { field: "status", value: "checked-in" } }),
+    queryFn: () =>
+      getBookings({ filter: { field: "status", value: "checked-in" } }),
   });
 
+  const searchValue = searchParams.get("search") || "";
+  let displayBookings = bookings;
+  if (searchValue) {
+    const term = searchValue.toLowerCase();
+    displayBookings = bookings.filter(
+      (b) =>
+        b.id.toString().includes(term) ||
+        b.guests?.fullName.toLowerCase().includes(term) ||
+        b.guests?.email.toLowerCase().includes(term) ||
+        b.cabins?.name?.toLowerCase().includes(term),
+    );
+  }
+
   if (isLoading) return <Spinner />;
-  if (!bookings?.length) return <Empty resourceName="checked-in bookings" />;
 
   return (
     <>
       <Row type="horizontal">
         <Heading as="h1">Restaurant Orders</Heading>
+        <TableOperations>
+          <SearchBar placeholder="Search by booking ID, guest name, email, or cabin name..." />
+        </TableOperations>
       </Row>
 
+      {!displayBookings?.length ? (
+        <Empty resourceName="checked-in bookings" />
+      ) : (
       <StyledTable>
         <TableHeader>
+          <div>Booking ID</div>
           <div>Guest</div>
           <div>Cabin</div>
           <div>Action</div>
@@ -73,8 +97,9 @@ function Restaurant() {
         </TableHeader>
 
         <Menus>
-          {bookings.map((booking) => (
+          {displayBookings.map((booking) => (
             <TableRow key={booking.id}>
+              <div>{booking.id}</div>
               <div>{booking.guests?.fullName}</div>
               <div>{booking.cabins?.name}</div>
               <div>
@@ -103,6 +128,7 @@ function Restaurant() {
           ))}
         </Menus>
       </StyledTable>
+      )}
     </>
   );
 }
