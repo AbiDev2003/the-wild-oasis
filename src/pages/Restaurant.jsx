@@ -1,15 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
 import { useNavigate, useSearchParams } from "react-router";
 import { HiEye, HiArrowUpOnSquare } from "react-icons/hi2";
-import { getBookings } from "../services/apiBookings";
 import { useCheckout } from "../features/check-in-out/useCheckout";
+import { useRestaurantBookings } from "../features/restaurant/useRestaurantBookings";
 
 import Heading from "../ui/Heading";
 import Row from "../ui/Row";
 import Spinner from "../ui/Spinner";
 import Empty from "../ui/Empty";
 import Menus from "../ui/Menus";
+import Pagination from "../ui/Pagination";
 import RestaurantOrderBox from "../features/restaurant/RestaurantOrderBox";
 import TableOperations from "./../ui/TableOperations";
 import SearchBar from "../ui/SearchBar";
@@ -53,18 +53,13 @@ function Restaurant() {
   const navigate = useNavigate();
   const { checkout } = useCheckout();
   const [searchParams] = useSearchParams();
-
-  const { isLoading, data: { data: bookings } = {} } = useQuery({
-    queryKey: ["bookings", "checked-in"],
-    queryFn: () =>
-      getBookings({ filter: { field: "status", value: "checked-in" } }),
-  });
+  const { isLoading, bookings, count } = useRestaurantBookings();
 
   const searchValue = searchParams.get("search") || "";
   let displayBookings = bookings;
   if (searchValue) {
     const term = searchValue.toLowerCase();
-    displayBookings = bookings.filter(
+    displayBookings = bookings?.filter(
       (b) =>
         b.id.toString().includes(term) ||
         b.guests?.fullName.toLowerCase().includes(term) ||
@@ -129,6 +124,7 @@ function Restaurant() {
         </Menus>
       </StyledTable>
       )}
+      <Pagination count={count} />
     </>
   );
 }

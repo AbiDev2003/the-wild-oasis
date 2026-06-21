@@ -1,9 +1,12 @@
-import { differenceInDays, parseISO } from "date-fns";
+import { differenceInDays, parseISO, subDays } from "date-fns";
 import { PAGE_SIZE } from "../utils/constants";
 import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
 
 export async function getBookings({ filter, sortBy, page, search }) {
+  const cutoff = subDays(new Date(), 2).toISOString();
+  await supabase.from("bookings").delete().eq("status", "unconfirmed").lt("startDate", cutoff);
+
   let query = supabase
     .from("bookings")
     .select(
@@ -40,6 +43,14 @@ export async function getBookings({ filter, sortBy, page, search }) {
     }
 
     query = query.or(filters.length > 0 ? filters.join(",") : "id.eq.0");
+  }
+
+  const applyArchivalFilter =
+    filter && filter.field === "status" && filter.value !== "checked-out";
+
+  if (applyArchivalFilter) {
+    const ninetyDaysAgo = subDays(new Date(), 90).toISOString();
+    query = query.or(`status.neq.checked-out,checkOutAt.gte.${ninetyDaysAgo}`);
   }
 
   if (sortBy)
