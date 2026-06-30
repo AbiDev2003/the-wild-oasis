@@ -19,6 +19,7 @@ import ProtectedRoute from "./ui/ProtectedRoute.jsx";
 import DarkModeProvider from "./context/DarkModeContext.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ResetPassword from './pages/ResetPassword.jsx';
+import VerifyInvoice from './pages/VerifyInvoice.jsx';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -58,6 +59,7 @@ function App() {
             <Route path="login" element={<Login />} />
             <Route path="forgot-password" element={<ForgotPassword />} />
             <Route path="reset-password" element={<ResetPassword />} />
+            <Route path="verify-invoice" element={<VerifyInvoice />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </BrowserRouter>

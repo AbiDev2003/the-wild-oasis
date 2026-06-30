@@ -171,7 +171,13 @@ export async function createUpdateBooking(newBooking, id) {
       .maybeSingle();
 
     if (existingGuest) {
-      guestId = existingGuest.id; //if the guest already exists, we use the existing guest id, otherwise we create a new guest and use the new guest id. This way we avoid creating duplicate guests with the same email.
+      guestId = existingGuest.id;
+      const { error: updateError } = await supabase
+        .from("guests")
+        .update({ fullName: newBooking.guestName })
+        .eq("id", existingGuest.id);
+
+      if (updateError) throw new Error("Guest could not be updated");
     } else {
       const { data: createdGuest, error: guestError } = await supabase
         .from("guests")
