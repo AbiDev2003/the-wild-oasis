@@ -19,7 +19,7 @@ export function useGenerateInvoice() {
       const booking = await getBooking(bookingId);
       const orders = await getRestaurantOrders(bookingId);
 
-      const verificationUrl = `https://the-wild-oasis.com/verify-invoice?bookingId=${bookingId}`;
+      const verificationUrl = `${import.meta.env.VITE_BASE_URL}/verify-invoice?bookingId=${bookingId}`;
       const qrDataUrl = await QRCode.toDataURL(verificationUrl, {
         width: 240,
         margin: 2,

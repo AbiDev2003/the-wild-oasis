@@ -161,7 +161,7 @@ function InvoicePDF({ booking, orders = [], hotelName = "The Wild Oasis", qrData
     0,
   );
 
-  const verificationUrl = `https://the-wild-oasis.com/verify-invoice?bookingId=${id}`;
+  const verificationUrl = `${import.meta.env.VITE_BASE_URL}/verify-invoice?bookingId=${id}`;
 
   return (
     <Document>
