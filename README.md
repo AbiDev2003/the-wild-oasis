@@ -1,6 +1,6 @@
 # The Wild Oasis — Hotel Management App
 
-A full-stack admin dashboard for managing a hotel/cabin resort. Handles the complete guest lifecycle: booking, check-in, room service, checkout, invoicing, and email notifications. Built for internal staff use.
+A full-stack admin dashboard for managing a hotel/cabin resort. Handles the complete guest lifecycle: booking, check-in, room service, checkout, invoicing, and email notifications. Built for internal staff use. Fully responsive — works on desktop, tablet, and mobile.
 
 **Live demo:** [https://thewildoasis-restoran.netlify.app](https://thewildoasis-restoran.netlify.app)
 
@@ -177,7 +177,7 @@ class node_supabase,node_migrations,node_edgefx,node_storage toneRose
 | **Frontend** | React 19 + Vite 8 |
 | **Backend** | Supabase (Postgres, Auth, Storage, Edge Functions) |
 | **State** | TanStack Query 5 |
-| **Styling** | styled-components |
+| **Styling** | styled-components (responsive layout, mobile-first) |
 | **Routing** | react-router 7 |
 | **Charts** | Recharts |
 | **PDF** | @react-pdf/renderer |

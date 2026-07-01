@@ -6,22 +6,40 @@ import Row from "../ui/Row";
 import AddBooking from "./../features/bookings/AddBooking";
 import SearchBar from "../ui/SearchBar";
 
+const PageHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.2rem;
+  }
+`;
+
 const SearchRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.2rem;
+  }
 `;
 
 function Bookings() {
   return (
     <>
-      <Row type="horizontal">
+      <PageHeader>
         <Heading as="h1">All bookings</Heading>
         <BookingTableOperations />
-      </Row>
+      </PageHeader>
       <Row>
         <SearchRow>
-          <SearchBar $width="46rem" placeholder="Search by guest name, email, booking ID or cabin name" />
+          <SearchBar $width="min(46rem, 100%)" placeholder="Search by guest name, email, booking ID or cabin name" />
           <AddBooking />
         </SearchRow>
         <BookingTable />

@@ -1,10 +1,8 @@
 import styled from "styled-components";
 
 import BookingDataBox from "./BookingDataBox";
-import Row from "../../ui/Row";
 import Heading from "../../ui/Heading";
 import Tag from "../../ui/Tag";
-import ButtonGroup from "../../ui/ButtonGroup";
 import Button from "../../ui/Button";
 import ButtonText from "../../ui/ButtonText";
 
@@ -24,6 +22,32 @@ const HeadingGroup = styled.div`
   display: flex;
   gap: 2.4rem;
   align-items: center;
+`;
+
+const DetailHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.2rem;
+  }
+`;
+
+const DetailButtonGroup = styled.div`
+  display: flex;
+  gap: 1.2rem;
+  justify-content: flex-end;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+
+    & button {
+      width: 100%;
+    }
+  }
 `;
 
 function BookingDetail() {
@@ -48,19 +72,19 @@ function BookingDetail() {
 
   return (
     <>
-      <Row type="horizontal">
+      <DetailHeader>
         <HeadingGroup>
           <Heading as="h1">Booking {bookingId}</Heading>
           <Tag type={statusToTagName[status]}>{status.replace("-", " ")}</Tag>
         </HeadingGroup>
         <ButtonText onClick={moveBack}>&larr; Back</ButtonText>
-      </Row>
+      </DetailHeader>
 
       <BookingDataBox booking={booking} />
 
       {status === "checked-in" && <RestaurantOrderBox bookingId={bookingId} />}
 
-      <ButtonGroup>
+      <DetailButtonGroup>
         {status === "unconfirmed" && (
           <Button onClick={() => navigate(`/checkin/${bookingId}`)}>
             Check in
@@ -95,7 +119,7 @@ function BookingDetail() {
         <Button variation="secondary" onClick={moveBack}>
           Back
         </Button>
-      </ButtonGroup>
+      </DetailButtonGroup>
     </>
   );
 }

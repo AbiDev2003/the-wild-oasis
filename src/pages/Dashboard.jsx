@@ -1,14 +1,27 @@
+import styled from "styled-components";
 import DashboardLayout from "../features/dashboard/DashboardLayout";
 import Heading from "../ui/Heading";
-import Row from "../ui/Row";
-import DashboardFilter from './../features/dashboard/DashboardFilter';
+import DashboardFilter from "./../features/dashboard/DashboardFilter";
+
+const PageHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.2rem;
+  }
+`;
+
 function Dashboard() {
   return (
     <>
-      <Row type="horizontal">
+      <PageHeader>
         <Heading as="h1">Dashboard</Heading>
-        <DashboardFilter/>
-      </Row>
+        <DashboardFilter />
+      </PageHeader>
       <DashboardLayout />
     </>
   );

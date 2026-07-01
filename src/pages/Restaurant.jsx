@@ -5,7 +5,6 @@ import { useCheckout } from "../features/check-in-out/useCheckout";
 import { useRestaurantBookings } from "../features/restaurant/useRestaurantBookings";
 
 import Heading from "../ui/Heading";
-import Row from "../ui/Row";
 import Spinner from "../ui/Spinner";
 import Empty from "../ui/Empty";
 import Menus from "../ui/Menus";
@@ -20,6 +19,11 @@ const StyledTable = styled.div`
   background-color: var(--color-grey-0);
   border-radius: var(--border-radius-md);
   overflow: hidden;
+
+  @media (max-width: 600px) {
+    border: none;
+    background-color: transparent;
+  }
 `;
 
 const TableHeader = styled.header`
@@ -35,6 +39,10 @@ const TableHeader = styled.header`
   font-weight: 600;
   color: var(--color-grey-600);
   padding: 1.6rem 2.4rem;
+
+  @media (max-width: 600px) {
+    display: none;
+  }
 `;
 
 const TableRow = styled.div`
@@ -46,6 +54,33 @@ const TableRow = styled.div`
 
   &:not(:last-child) {
     border-bottom: 1px solid var(--color-grey-100);
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+    padding: 1.6rem;
+    margin-bottom: 1.2rem;
+    border: 1px solid var(--color-grey-200);
+    border-radius: var(--border-radius-md);
+    background-color: var(--color-grey-0);
+    box-shadow: var(--shadow-sm);
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--color-grey-200);
+    }
+  }
+`;
+
+const PageHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.2rem;
   }
 `;
 
@@ -72,12 +107,12 @@ function Restaurant() {
 
   return (
     <>
-      <Row type="horizontal">
+      <PageHeader>
         <Heading as="h1">Restaurant Orders</Heading>
         <TableOperations>
-          <SearchBar placeholder="Search by booking ID, guest name, email, or cabin name..." />
+          <SearchBar $width="min(46rem, 100%)" placeholder="Search by booking ID, guest name, email, or cabin name..." />
         </TableOperations>
-      </Row>
+      </PageHeader>
 
       {!displayBookings?.length ? (
         <Empty resourceName="checked-in bookings" />

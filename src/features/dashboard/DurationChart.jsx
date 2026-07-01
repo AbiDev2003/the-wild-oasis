@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Heading from "../../ui/Heading";
 import {
@@ -25,6 +26,11 @@ const ChartBox = styled.div`
 
   & .recharts-pie-label-text {
     font-weight: 600;
+  }
+
+  @media (max-width: 1024px) {
+    grid-column: 1;
+    padding: 2rem 1.6rem;
   }
 `;
 
@@ -145,19 +151,32 @@ function DurationChart({ confirmedStays }) {
   const {isDarkMode} = useDarkMode(); 
   const startData = isDarkMode ? startDataDark : startDataLight; 
   const data = prepareData(startData, confirmedStays);
+  const containerRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(([entry]) => {
+      setIsMobile(entry.contentRect.width < 500);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <ChartBox>
+    <ChartBox ref={containerRef}>
       <Heading as="h2">Stay duration summery</Heading>
-      <ResponsiveContainer width="100%" height={290}>
+      <ResponsiveContainer width="100%" height={isMobile ? 350 : 290}>
         <PieChart>
           <Pie
             data={data}
             nameKey="duration"
             dataKey="value"
-            innerRadius={85}
-            outerRadius={110}
-            cx="40%"
-            cy="40%"
+            innerRadius={isMobile ? 70 : 85}
+            outerRadius={isMobile ? 95 : 110}
+            cx="50%"
+            cy={isMobile ? "40%" : "45%"}
             paddingAngle={3}
           >
             {startDataLight.map((entry) => (
@@ -170,10 +189,10 @@ function DurationChart({ confirmedStays }) {
           </Pie>
           <Tooltip />
           <Legend
-            verticalAlign="middle"
-            align="right"
-            width="30%"
-            layout="vertical"
+            verticalAlign={isMobile ? "bottom" : "middle"}
+            align={isMobile ? "center" : "right"}
+            width={isMobile ? "100%" : "30%"}
+            layout={isMobile ? "horizontal" : "vertical"}
             iconSize={15}
             iconType="circle"
           />
