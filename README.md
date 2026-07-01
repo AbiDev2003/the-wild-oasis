@@ -411,6 +411,45 @@ flowchart TD
 
 ---
 
+## Screenshots
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center"><b>Login Page</b></td>
+      <td align="center"><b>Dashboard</b></td>
+      <td align="center"><b>Bookings</b></td>
+    </tr>
+    <tr>
+      <td><img src="UI-screenshots/login-page.png" alt="Login Page" width="300"/></td>
+      <td><img src="UI-screenshots/dashboard.png" alt="Dashboard" width="300"/></td>
+      <td><img src="UI-screenshots/bookings.png" alt="Bookings" width="300"/></td>
+    </tr>
+    <tr>
+      <td align="center"><b>Cabins</b></td>
+      <td align="center"><b>Restaurant Orders</b></td>
+      <td align="center"><b>Create User</b></td>
+    </tr>
+    <tr>
+      <td><img src="UI-screenshots/cabins.png" alt="Cabins" width="300"/></td>
+      <td><img src="UI-screenshots/restaurant-orders.png" alt="Restaurant Orders" width="300"/></td>
+      <td><img src="UI-screenshots/create-user.png" alt="Create User" width="300"/></td>
+    </tr>
+    <tr>
+      <td align="center"><b>Update Account</b></td>
+      <td align="center"><b>Hotel Settings</b></td>
+      <td align="center"><b>Booking Details</b></td>
+    </tr>
+    <tr>
+      <td><img src="UI-screenshots/update-account.png" alt="Update Account" width="300"/></td>
+      <td><img src="UI-screenshots/update-hotel-settings.png" alt="Hotel Settings" width="300"/></td>
+      <td><img src="UI-screenshots/booking-info-page.png" alt="Booking Details" width="300"/></td>
+    </tr>
+  </table>
+</div>
+
+---
+
 ## Environment Variables
 
 | Variable | Description |
