@@ -54,42 +54,42 @@ const StyledNavLink = styled(NavLink)`
   }
 `;
 
-function MainNav() {
+function MainNav({ onClose }) {
   return (
     <nav>
       <NavList>
         <li>
-          <StyledNavLink to="/dashboard">
+          <StyledNavLink to="/dashboard" onClick={onClose}>
             <HiOutlineHome />
             Home
           </StyledNavLink>
         </li>
         <li>
-          <StyledNavLink to="/bookings">
+          <StyledNavLink to="/bookings" onClick={onClose}>
             <HiOutlineCalendarDays />
             Bookings
           </StyledNavLink>
         </li>
         <li>
-          <StyledNavLink to="/cabins">
+          <StyledNavLink to="/cabins" onClick={onClose}>
             <HiOutlineHomeModern />
             Cabins
           </StyledNavLink>
         </li>
         <li>
-          <StyledNavLink to="/restaurant">
+          <StyledNavLink to="/restaurant" onClick={onClose}>
             <HiOutlineShoppingCart />
             Restaurant
           </StyledNavLink>
         </li>
         <li>
-          <StyledNavLink to="/users">
+          <StyledNavLink to="/users" onClick={onClose}>
             <HiOutlineUsers />
             Users
           </StyledNavLink>
         </li>
         <li>
-          <StyledNavLink to="/settings">
+          <StyledNavLink to="/settings" onClick={onClose}>
             <HiOutlineCog6Tooth />
             Settings
           </StyledNavLink>

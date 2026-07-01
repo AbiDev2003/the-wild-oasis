@@ -56,7 +56,7 @@ function Sidebar({ isOpen, onClose }) {
         <HiXMark />
       </CloseButton>
       <Logo />
-      <MainNav />
+      <MainNav onClose={onClose} />
     </StyledSidebar>
   );
 }
