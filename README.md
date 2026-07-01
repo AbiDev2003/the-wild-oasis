@@ -2,6 +2,47 @@
 
 A full-stack admin dashboard for managing a hotel/cabin resort. Handles the complete guest lifecycle: booking, check-in, room service, checkout, invoicing, and email notifications. Built for internal staff use.
 
+**Live demo:** [https://thewildoasis-restoran.netlify.app](https://thewildoasis-restoran.netlify.app)
+
+---
+
+## Screenshots
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center"><b>Login Page</b></td>
+      <td align="center"><b>Dashboard</b></td>
+      <td align="center"><b>Bookings</b></td>
+    </tr>
+    <tr>
+      <td><img src="UI-screenshots/login-page.png" alt="Login Page" width="300"/></td>
+      <td><img src="UI-screenshots/dashboard.png" alt="Dashboard" width="300"/></td>
+      <td><img src="UI-screenshots/bookings.png" alt="Bookings" width="300"/></td>
+    </tr>
+    <tr>
+      <td align="center"><b>Cabins</b></td>
+      <td align="center"><b>Restaurant Orders</b></td>
+      <td align="center"><b>Create User</b></td>
+    </tr>
+    <tr>
+      <td><img src="UI-screenshots/cabins.png" alt="Cabins" width="300"/></td>
+      <td><img src="UI-screenshots/restaurant-orders.png" alt="Restaurant Orders" width="300"/></td>
+      <td><img src="UI-screenshots/create-user.png" alt="Create User" width="300"/></td>
+    </tr>
+    <tr>
+      <td align="center"><b>Update Account</b></td>
+      <td align="center"><b>Hotel Settings</b></td>
+      <td align="center"><b>Booking Details</b></td>
+    </tr>
+    <tr>
+      <td><img src="UI-screenshots/update-account.png" alt="Update Account" width="300"/></td>
+      <td><img src="UI-screenshots/update-hotel-settings.png" alt="Hotel Settings" width="300"/></td>
+      <td><img src="UI-screenshots/booking-info-page.png" alt="Booking Details" width="300"/></td>
+    </tr>
+  </table>
+</div>
+
 ---
 
 ## Architecture
@@ -408,45 +449,6 @@ flowchart TD
 - Maximum guests per booking (default: 8).
 - Breakfast price (used by the `settings_breakfast_price_update` trigger).
 - Changes to breakfast price retroactively affect existing non-checked-out bookings via the database trigger.
-
----
-
-## Screenshots
-
-<div align="center">
-  <table>
-    <tr>
-      <td align="center"><b>Login Page</b></td>
-      <td align="center"><b>Dashboard</b></td>
-      <td align="center"><b>Bookings</b></td>
-    </tr>
-    <tr>
-      <td><img src="UI-screenshots/login-page.png" alt="Login Page" width="300"/></td>
-      <td><img src="UI-screenshots/dashboard.png" alt="Dashboard" width="300"/></td>
-      <td><img src="UI-screenshots/bookings.png" alt="Bookings" width="300"/></td>
-    </tr>
-    <tr>
-      <td align="center"><b>Cabins</b></td>
-      <td align="center"><b>Restaurant Orders</b></td>
-      <td align="center"><b>Create User</b></td>
-    </tr>
-    <tr>
-      <td><img src="UI-screenshots/cabins.png" alt="Cabins" width="300"/></td>
-      <td><img src="UI-screenshots/restaurant-orders.png" alt="Restaurant Orders" width="300"/></td>
-      <td><img src="UI-screenshots/create-user.png" alt="Create User" width="300"/></td>
-    </tr>
-    <tr>
-      <td align="center"><b>Update Account</b></td>
-      <td align="center"><b>Hotel Settings</b></td>
-      <td align="center"><b>Booking Details</b></td>
-    </tr>
-    <tr>
-      <td><img src="UI-screenshots/update-account.png" alt="Update Account" width="300"/></td>
-      <td><img src="UI-screenshots/update-hotel-settings.png" alt="Hotel Settings" width="300"/></td>
-      <td><img src="UI-screenshots/booking-info-page.png" alt="Booking Details" width="300"/></td>
-    </tr>
-  </table>
-</div>
 
 ---
 
