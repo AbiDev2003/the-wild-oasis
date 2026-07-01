@@ -7,6 +7,7 @@ import { useLogin } from "./useLogin";
 import SpinnerMini from "../../ui/SpinnerMini";
 import { Link } from "react-router";
 import PasswordInput from "../../ui/PasswordInput";
+import OAuthButtons from "./OAuthButtons";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -56,6 +57,7 @@ function LoginForm() {
       <FormRowVertical>
         <Button size="large">{!isPending ? "Login" : <SpinnerMini />}</Button>
       </FormRowVertical>
+      <OAuthButtons />
     </Form>
   );
 }

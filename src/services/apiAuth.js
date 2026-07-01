@@ -14,6 +14,14 @@ export async function signup({ fullName, email, password }) {
 
   if (error) throw new Error(error.message);
 
+  const { error: insertError } = await supabase
+    .from("employees")
+    .insert({ email, full_name: fullName })
+    .onConflict("email")
+    .ignoreDuplicates();
+
+  if (insertError) throw new Error("User created but failed to add to employees");
+
   return data;
 }
 
@@ -89,4 +97,33 @@ export async function updatePassword(password) {
   const { data, error } = await supabase.auth.updateUser({ password });
   if (error) throw new Error(error.message);
   return data;
+}
+
+export async function loginWithOAuth(provider) {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: `${window.location.origin}/auth/callback`,
+    },
+  });
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function getEmployeeByEmail(email) {
+  const { data, error } = await supabase
+    .from("employees")
+    .select("*")
+    .eq("email", email)
+    .eq("is_active", true)
+    .single();
+
+  if (error) return null;
+  return data;
+}
+
+export async function signOutAndClear() {
+  const { error } = await supabase.auth.signOut();
+  if (error) throw new Error(error.message);
 }

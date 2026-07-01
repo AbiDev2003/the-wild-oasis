@@ -20,6 +20,7 @@ import DarkModeProvider from "./context/DarkModeContext.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ResetPassword from './pages/ResetPassword.jsx';
 import VerifyInvoice from './pages/VerifyInvoice.jsx';
+import AuthCallback from "./pages/AuthCallback.jsx";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -57,6 +58,7 @@ function App() {
               <Route path="restaurant" element={<Restaurant />} />
             </Route>
             <Route path="login" element={<Login />} />
+            <Route path="auth/callback" element={<AuthCallback />} />
             <Route path="forgot-password" element={<ForgotPassword />} />
             <Route path="reset-password" element={<ResetPassword />} />
             <Route path="verify-invoice" element={<VerifyInvoice />} />
